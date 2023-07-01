@@ -7,7 +7,9 @@ import "./utils/vm.sol";
 
 contract FallbackTest is DSTest {
     Vm vm = Vm(address(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D));
+
     Ethernaut ethernaut;
+
     address eoaAddress = address(100);
 
     function setUp() public {
@@ -25,6 +27,7 @@ contract FallbackTest is DSTest {
         FallbackFactory fallbackFactory = new FallbackFactory();
         ethernaut.registerLevel(fallbackFactory);
         vm.startPrank(eoaAddress);
+
         address levelAddress = ethernaut.createLevelInstance(fallbackFactory);
         Fallback ethernautFallback = Fallback(payable(levelAddress));
 
@@ -42,16 +45,23 @@ contract FallbackTest is DSTest {
         assertEq(ethernautFallback.owner(), eoaAddress);
 
         // Withdraw from contract - Check contract balance before and after
-        emit log_named_uint("Fallback contract balance", address(ethernautFallback).balance);
+        emit log_named_uint(
+            "Fallback contract balance",
+            address(ethernautFallback).balance
+        );
         ethernautFallback.withdraw();
-        emit log_named_uint("Fallback contract balance", address(ethernautFallback).balance);
+        emit log_named_uint(
+            "Fallback contract balance",
+            address(ethernautFallback).balance
+        );
 
         //////////////////////
         // LEVEL SUBMISSION //
         //////////////////////
-        
 
-        bool levelSuccessfullyPassed = ethernaut.submitLevelInstance(payable(levelAddress));
+        bool levelSuccessfullyPassed = ethernaut.submitLevelInstance(
+            payable(levelAddress)
+        );
         vm.stopPrank();
         assert(levelSuccessfullyPassed);
     }
